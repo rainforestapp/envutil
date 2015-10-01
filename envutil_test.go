@@ -46,6 +46,25 @@ func TestGetenvInt(t *testing.T) {
 	GetenvInt("FOO", 42)
 }
 
+func TestMustGetenvInt(t *testing.T) {
+	// with a valid value
+	os.Setenv("FOO", "42")
+	want := 42
+	got := MustGetenvInt("FOO")
+	if want != got {
+		t.Errorf("MustGetenvInt should have returned %d but returned %d", want, got)
+	}
+
+	// when the variable isn't set
+	os.Setenv("FOO", "")
+	defer func() {
+		if r := recover(); r == nil {
+			t.Error("MustGetenvInt should have panicked on empty value but didn't")
+		}
+	}()
+	MustGetenvInt("FOO")
+}
+
 func TestMustGetenv(t *testing.T) {
 	// with a valid value
 	want := "foo"

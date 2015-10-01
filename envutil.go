@@ -46,3 +46,13 @@ func GetenvInt(key string, def int) int {
 		return ret
 	}
 }
+
+// MustGetenvInt returns an environment variable parsed as an integer,
+// panicking if the integer is not set, is empty, or can't be parsed
+// as an integer.
+func MustGetenvInt(key string) int {
+	if os.Getenv(key) == "" {
+		panic(fmt.Sprintf("MustGetenvInt: %s must be set", key))
+	}
+	return GetenvInt(key, 0)
+}
