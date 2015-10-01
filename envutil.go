@@ -56,3 +56,41 @@ func MustGetenvInt(key string) int {
 	}
 	return GetenvInt(key, 0)
 }
+
+// GetenvBool returns an environment variable parsed as a boolean,
+// returning a default value of def if the variable isn't set or is
+// empty. If the variable is set but can't be parsed to a boolean, it
+// panics.
+func GetenvBool(key string, def bool) bool {
+	val := os.Getenv(key)
+	if val == "" {
+		return def
+	}
+
+	trueVals := []string{"true", "1"}
+	falseVals := []string{"false", "0"}
+
+	for _, candidate := range trueVals {
+		if val == candidate {
+			return true
+		}
+	}
+
+	for _, candidate := range falseVals {
+		if val == candidate {
+			return false
+		}
+	}
+
+	panic(fmt.Sprintf("GetenvBool: %s could not be parsed as an integer", val))
+}
+
+// MustGetenvBool returns an environment variable parsed as a boolean,
+// panicking if the integer is not set, is empty, or can't be parsed
+// as a boolean.
+func MustGetenvBool(key string) bool {
+	if os.Getenv(key) == "" {
+		panic(fmt.Sprintf("MustGetenvBool: %s must be set", key))
+	}
+	return GetenvBool(key, false)
+}

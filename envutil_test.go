@@ -82,3 +82,55 @@ func TestMustGetenv(t *testing.T) {
 	}()
 	MustGetenv("BOGUS")
 }
+
+var boolTests = []struct {
+	val      string
+	expected bool
+}{
+	{"true", true},
+	{"1", true},
+	{"false", false},
+	{"0", false},
+}
+
+func TestGetenvBool(t *testing.T) {
+	for _, tt := range boolTests {
+		os.Setenv("FOO", tt.val)
+		if GetenvBool("FOO", !tt.expected) != tt.expected {
+			t.Errorf("Parse error: %s should have been parsed as %v", tt.val, tt.expected)
+		}
+	}
+
+	os.Setenv("FOO", "")
+	if !GetenvBool("FOO", true) {
+		t.Error("GetenvBool should have returned the default value of true")
+	}
+	if GetenvBool("FOO", false) {
+		t.Error("GetenvBool should have returned the default value of false")
+	}
+
+	os.Setenv("FOO", "fdsafdsaf")
+	defer func() {
+		if r := recover(); r == nil {
+			t.Error("GetenvBool should have panicked on invalid value")
+		}
+	}()
+	GetenvBool("FOO", true)
+}
+
+func TestMustGetenvBool(t *testing.T) {
+	for _, tt := range boolTests {
+		os.Setenv("FOO", tt.val)
+		if MustGetenvBool("FOO") != tt.expected {
+			t.Errorf("Parse error: %s should have been parsed as %v", tt.val, tt.expected)
+		}
+	}
+
+	os.Setenv("FOO", "")
+	defer func() {
+		if r := recover(); r == nil {
+			t.Error("MustGetenvBool should have panicked on empty value")
+		}
+	}()
+	MustGetenvBool("FOO")
+}
