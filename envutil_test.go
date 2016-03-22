@@ -83,6 +83,24 @@ func TestMustGetenv(t *testing.T) {
 	MustGetenv("BOGUS")
 }
 
+func TestMustGetenvStr(t *testing.T) {
+	// with a valid value
+	want := "foo"
+	os.Setenv("FOO", "foo")
+	got := MustGetenvStr("FOO")
+	if want != got {
+		t.Errorf("MustGetenvStr should have returned %s but returned %s", want, got)
+	}
+
+	// with an empty value
+	defer func() {
+		if r := recover(); r == nil {
+			t.Error("MustGetenvStr should have panicked on empty value but didn't")
+		}
+	}()
+	MustGetenvStr("BOGUS")
+}
+
 var boolTests = []struct {
 	val      string
 	expected bool
