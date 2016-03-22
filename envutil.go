@@ -14,9 +14,8 @@ func GetenvStr(key, def string) string {
 	val := os.Getenv(key)
 	if val == "" {
 		return def
-	} else {
-		return val
 	}
+	return val
 }
 
 // MustGetenv returns the value of an environment variable and panics
@@ -25,9 +24,14 @@ func MustGetenv(key string) string {
 	val := os.Getenv(key)
 	if val == "" {
 		panic(fmt.Sprintf("Environment value %s must be set", key))
-	} else {
-		return val
 	}
+	return val
+}
+
+// MustGetenvStr is an alias for the MustGetenv which fits the rest
+// of function naming.
+func MustGetenvStr(key string) string {
+	return MustGetenv(key)
 }
 
 // GetenvInt returns an environment variable parsed as an integer,
@@ -38,13 +42,12 @@ func GetenvInt(key string, def int) int {
 	val := os.Getenv(key)
 	if val == "" {
 		return def
-	} else {
-		ret, err := strconv.Atoi(val)
-		if err != nil {
-			panic(fmt.Sprintf("Error parsing value for %s: %v", key, err))
-		}
-		return ret
 	}
+	ret, err := strconv.Atoi(val)
+	if err != nil {
+		panic(fmt.Sprintf("Error parsing value for %s: %v", key, err))
+	}
+	return ret
 }
 
 // MustGetenvInt returns an environment variable parsed as an integer,
